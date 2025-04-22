@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\Users\Administrator\Desktop\course\Semester3\Network\TL_A2_Repo\NetworkedTCPChat\NetworkedTCPChat\main.cpp(6,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+  NetworkedTCPChat.vcxproj -> C:\Users\Administrator\Desktop\course\Semester3\Network\TL_A2_Repo\NetworkedTCPChat\Debug\Client.exe

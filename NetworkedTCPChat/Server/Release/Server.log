@@ -1,0 +1,6 @@
+﻿  main.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 14 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Server.vcxproj -> C:\Users\Administrator\Desktop\course\Semester3\Network\TL_A2_Repo\NetworkedTCPChat\Release\Server.exe
