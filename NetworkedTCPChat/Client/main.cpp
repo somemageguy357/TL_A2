@@ -45,8 +45,6 @@ int main()
 	//	std::cout << "IPv4 address: " << str2 << std::endl;
 	//}
 
-	//CSocket oSocket(10001); ---------------------------------------------------------------------------------------------
-
 	//SOCKET oSocket;
 	
 	//oSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -94,7 +92,8 @@ int main()
 
 	//closesocket(oSocket);
 
-	CSocket* poSocket = new CSocket(10001, 10000);
+	CSocket* poSocket = new CSocket(10001, 9999);
+	poSocket->SendRequest();
 
 	while (true)
 	{

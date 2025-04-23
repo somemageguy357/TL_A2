@@ -1,6 +1,8 @@
 #include <winsock2.h>
 #include <iostream>
 
+#include "Commands.h"
+
 int main()
 {
 	WORD wVersionRequested;
@@ -29,7 +31,7 @@ int main()
 
 	sockaddr_in oSocketAddress;
 	oSocketAddress.sin_family = AF_INET;
-	oSocketAddress.sin_port = htons(10000);
+	oSocketAddress.sin_port = htons(9999);
 	oSocketAddress.sin_addr.S_un.S_addr = INADDR_ANY;
 
 	int iBound = bind(oSocket, (sockaddr*) &oSocketAddress, sizeof(oSocketAddress));
@@ -48,6 +50,25 @@ int main()
 	{
 		std::cout << "Listening Error: " << WSAGetLastError() << std::endl;
 		WSACleanup();
+	}
+
+	TIMEVAL tWait;
+	tWait.tv_sec = 1;
+	tWait.tv_usec = 0;
+
+	int iNumReady = 0;
+	int iCount = 0;
+
+	while (iNumReady == 0)
+	{
+		std::cout << "\rtime waiting for connection " << iCount;
+		iCount += 1;
+
+		fd_set oReadSet;
+		FD_ZERO(&oReadSet);
+		FD_SET(oSocket, &oReadSet);
+
+		iNumReady = select(0, &oReadSet, NULL, NULL, &tWait);
 	}
 
 	std::cout << "accepting...\n";
@@ -77,13 +98,14 @@ int main()
 
 	std::cout << "receiving...\n";
 
-	char cBuffer[256];
+	const int kiBufferSize = 257; //Has to be one more than the limit (256).
+	char cBuffer[kiBufferSize];
 
 	while (true)
 	{
 		std::cout << "waiting for message...\n";
 
-		int iRcv = recv(oClientSocket, cBuffer, 256, 0);
+		int iRcv = recv(oClientSocket, cBuffer, kiBufferSize - 1, 0);
 
 		if (iRcv == SOCKET_ERROR)
 		{
@@ -92,7 +114,37 @@ int main()
 		}
 
 		cBuffer[iRcv] = '\0';
-		printf("msg: %s\n\n", cBuffer);
+
+		std::string sBuffer = cBuffer;
+
+		CCommands::ECommand eMessageCommand = CCommands::CheckForCommand(&sBuffer);
+
+		if (eMessageCommand == CCommands::ECommand::Error)
+		{
+			//notify client of error message.
+			std::cout << sBuffer << std::endl;
+		}
+
+		else if (eMessageCommand == CCommands::ECommand::Put)
+		{
+			std::cout << "Secret message has been put.\n";
+		}
+
+		else if (eMessageCommand == CCommands::ECommand::Get)
+		{
+			std::cout << "Secret message has been retrieved.\n";
+		}
+
+		else if (eMessageCommand == CCommands::ECommand::Quit)
+		{
+			std::cout << "Client has left da server.\n";
+		}
+
+		else
+		{
+			//display message to all clients.
+			std::cout << "Client Message: " << sBuffer << std::endl;
+		}
 
 		//int iRcv2 = recv(oClientSocket2, cBuffer, 256, 0);
 
