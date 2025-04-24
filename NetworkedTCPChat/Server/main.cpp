@@ -175,7 +175,7 @@ int main()
 	{
 		std::cout << "Sending message to client...\n";
 
-		int iSend = send(oSocket, sSendingMessage.c_str(), sSendingMessage.size(), 0);
+		int iSend = send(oClientSocket, sSendingMessage.c_str(), sSendingMessage.size(), 0);
 
 		if (iSend == SOCKET_ERROR)
 		{

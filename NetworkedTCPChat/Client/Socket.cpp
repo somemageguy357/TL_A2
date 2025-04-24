@@ -73,16 +73,19 @@ void CSocket::Receive()
 	{
 		std::cout << "waiting for message...\n";
 
-		int iRcv = recv(m_oServerSocket, cBuffer, kiBufferSize - 1, 0);
+		int iRcv = recv(m_oSocket, cBuffer, kiBufferSize - 1, 0);
 
 		if (iRcv == SOCKET_ERROR)
 		{
 			std::cout << "Receiving Error: " << WSAGetLastError() << std::endl;
-			break;
-			//continue;
+			//break;
+			continue;
 		}
 
 		cBuffer[iRcv] = '\0';
+
+		std::cout << cBuffer << std::endl;
+		break;
 	}
 }
 
