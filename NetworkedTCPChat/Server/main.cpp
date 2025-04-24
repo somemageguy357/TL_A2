@@ -5,6 +5,7 @@
 
 int main()
 {
+	//------------------------------------------------------------------------------------WSA SETUP
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	wVersionRequested = MAKEWORD(2, 2);
@@ -21,6 +22,7 @@ int main()
 		std::cout << "WSAStartUp failed. Version not available." << std::endl;
 	}
 
+	//------------------------------------------------------------------------------------SOCKET CREATION
 	SOCKET oSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (oSocket == INVALID_SOCKET)
@@ -42,6 +44,7 @@ int main()
 		WSACleanup();
 	}
 
+	//------------------------------------------------------------------------------------LISTENING FOR CONNECTION
 	std::cout << "listening...\n";
 
 	int iStatus = listen(oSocket, 5);
@@ -71,6 +74,7 @@ int main()
 		iNumReady = select(0, &oReadSet, NULL, NULL, &tWait);
 	}
 
+	//------------------------------------------------------------------------------------ACCEPTING CONNECTION
 	std::cout << "accepting...\n";
 
 	sockaddr_in oClientAddress;
@@ -96,14 +100,17 @@ int main()
 	//	WSACleanup();
 	//}
 
+	//------------------------------------------------------------------------------------RECEIVING MESSAGES
 	std::cout << "receiving...\n";
 
 	const int kiBufferSize = 257; //Has to be one more than the limit (256).
 	char cBuffer[kiBufferSize];
 
+	std::string sSendingMessage = "message from server: ";
+
 	while (true)
 	{
-		std::cout << "waiting for message...\n";
+		std::cout << "waiting for message from client...\n";
 
 		int iRcv = recv(oClientSocket, cBuffer, kiBufferSize - 1, 0);
 
@@ -146,6 +153,8 @@ int main()
 			std::cout << "Client Message: " << sBuffer << std::endl;
 		}
 
+		sSendingMessage += sBuffer;
+		break;
 		//int iRcv2 = recv(oClientSocket2, cBuffer, 256, 0);
 
 		//if (iRcv2 == SOCKET_ERROR)
@@ -156,6 +165,26 @@ int main()
 
 		//cBuffer[iRcv2] = '\0';
 		//printf("msg: %s\n\n", cBuffer);
+	}
+
+	//------------------------------------------------------------------------------------SENDING MESSAGE
+	//char cBuffer2[256];
+	//cBuffer = sSendingMessage.c_str();
+
+	while (true)
+	{
+		std::cout << "Sending message to client...\n";
+
+		int iSend = send(oSocket, sSendingMessage.c_str(), sSendingMessage.size(), 0);
+
+		if (iSend == SOCKET_ERROR)
+		{
+			std::cout << "Sending Error: " << WSAGetLastError() << std::endl;
+			WSACleanup();
+			break;
+		}
+
+		break;
 	}
 
 	closesocket(oClientSocket);

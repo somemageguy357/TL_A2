@@ -2,6 +2,6 @@
   Socket.cpp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 88 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 89 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Client.vcxproj -> C:\Users\Administrator\Desktop\course\Semester3\Network\TL_A2_Repo\NetworkedTCPChat\Release\Client.exe

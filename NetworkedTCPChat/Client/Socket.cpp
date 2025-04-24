@@ -20,7 +20,7 @@ std::string CSocket::GetIPv4Address()
 	return m_sIPv4;
 }
 
-void CSocket::SendRequest()
+void CSocket::Send()
 {
 	unsigned int uiLineLength = -1;
 
@@ -34,7 +34,7 @@ void CSocket::SendRequest()
 
 		std::cin.getline(cBuffer, uiLineLength);
 
-		std::string sMessage = cBuffer;
+		std::string sMessage = cBuffer; //maybe replace with char sizeof?
 
 		if (sMessage.size() > ksiMaxInputLength)
 		{
@@ -50,6 +50,39 @@ void CSocket::SendRequest()
 			WSACleanup();
 			break;
 		}
+
+		break;
+	}
+}
+
+void CSocket::Receive()
+{
+	//int iServerAddressLength = sizeof(m_oServerAddress);
+	//SOCKET oServerSocket = accept(m_oSocket, (sockaddr*)&m_oServerAddress, &iServerAddressLength);
+
+	//if (oServerSocket == INVALID_SOCKET)
+	//{
+	//	std::cout << "Accept Error: " << WSAGetLastError() << std::endl;
+	//	//WSACleanup();
+	//}
+
+	const int kiBufferSize = 257; //Has to be one more than the limit (256).
+	char cBuffer[kiBufferSize];
+
+	while (true)
+	{
+		std::cout << "waiting for message...\n";
+
+		int iRcv = recv(m_oServerSocket, cBuffer, kiBufferSize - 1, 0);
+
+		if (iRcv == SOCKET_ERROR)
+		{
+			std::cout << "Receiving Error: " << WSAGetLastError() << std::endl;
+			break;
+			//continue;
+		}
+
+		cBuffer[iRcv] = '\0';
 	}
 }
 
@@ -106,13 +139,21 @@ void CSocket::SetupSocket(int _iPortNumber)
 	if (m_oSocket == INVALID_SOCKET)
 	{
 		std::cout << "Invalid Socket: " << WSAGetLastError() << std::endl;
-		WSACleanup();
+		//WSACleanup();
 	}
 
 	sockaddr_in oSocketAddress;
 	oSocketAddress.sin_family = AF_INET;
 	oSocketAddress.sin_port = htons(_iPortNumber);
 	oSocketAddress.sin_addr.S_un.S_addr = INADDR_ANY;
+
+	int iStatus = bind(m_oSocket, (sockaddr*)&oSocketAddress, sizeof(oSocketAddress));
+
+	if (iStatus == SOCKET_ERROR)
+	{
+		std::cout << "Client Bind Error: " << WSAGetLastError() << std::endl;
+		//WSACleanup();
+	}
 }
 
 void CSocket::AttemptServerConnection(int _iServerPortNumber)
@@ -168,13 +209,21 @@ void CSocket::AttemptServerConnection(int _iServerPortNumber)
 
 	std::cout << "Connecting to Server...\n";
 
-	sockaddr_in oServerAddress;
-	oServerAddress.sin_family = AF_INET;
-	oServerAddress.sin_port = htons(_iServerPortNumber);
+	m_oServerSocket = socket(AF_INET, SOCK_STREAM, 0);
 
-	InetPton(AF_INET, L"127.0.0.1", &oServerAddress.sin_addr.S_un.S_addr);
+	if (m_oSocket == INVALID_SOCKET)
+	{
+		std::cout << "Invalid Server Socket: " << WSAGetLastError() << std::endl;
+		//WSACleanup();
+	}
 
-	int iStatus = connect(m_oSocket, (sockaddr*)&oServerAddress, sizeof(oServerAddress));
+	//m_oServerAddress;
+	m_oServerAddress.sin_family = AF_INET;
+	m_oServerAddress.sin_port = htons(_iServerPortNumber);
+
+	InetPton(AF_INET, L"127.0.0.1", &m_oServerAddress.sin_addr.S_un.S_addr);
+
+	int iStatus = connect(m_oSocket, (sockaddr*)&m_oServerAddress, sizeof(m_oServerAddress));
 
 	if (iStatus == SOCKET_ERROR)
 	{

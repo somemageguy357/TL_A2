@@ -1,5 +1,4 @@
 #pragma once
-#define NOMINMAX
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <iostream>
@@ -13,10 +12,15 @@ public:
 
 	std::string GetIPv4Address();
 
-	void SendRequest();
+	void Send();
+
+	void Receive();
 
 private:
 	SOCKET m_oSocket;
+	SOCKET m_oServerSocket;
+
+	sockaddr_in m_oServerAddress;
 
 	std::string m_sIPv4;
 

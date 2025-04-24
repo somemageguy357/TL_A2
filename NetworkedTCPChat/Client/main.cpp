@@ -93,7 +93,8 @@ int main()
 	//closesocket(oSocket);
 
 	CSocket* poSocket = new CSocket(10001, 9999);
-	poSocket->SendRequest();
+	poSocket->Send();
+	poSocket->Receive();
 
 	while (true)
 	{
