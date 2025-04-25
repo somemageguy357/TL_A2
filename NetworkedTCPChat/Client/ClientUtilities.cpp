@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : ClientUtilities.cpp
+Description : Contains function definitions for ClientUtilities.h.
+Author : Connor Galvin
+Mail : Connor.Galvin@mds.ac.nz
+**************************************************************************/
+
 #include "ClientUtilities.h"
 #include <iostream>
 #include <Windows.h>

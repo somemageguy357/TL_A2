@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : ServerSocket.cpp
+Description : Contains function definitions for ServerSocket.h.
+Author : Connor Galvin
+Mail : Connor.Galvin@mds.ac.nz
+**************************************************************************/
+
 #include "ServerSocket.h"
 
 CServerSocket::CServerSocket(int _iPortNumber)
