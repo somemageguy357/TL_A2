@@ -17,10 +17,10 @@ CCommands::ECommand CCommands::CheckForCommand(std::string* _psMessage)
 
 CCommands::ECommand CCommands::DetermineCommand(std::string* _psMessage)
 {
-	//Get command from message.
 	std::string sCommand = "";
 	int iCommandLength = 0;
 
+	//Get command from message.
 	for (size_t i = 0; i < _psMessage->size(); i++)
 	{
 		if ((*_psMessage)[i] != ' ')
@@ -45,15 +45,19 @@ CCommands::ECommand CCommands::DetermineCommand(std::string* _psMessage)
 		}
 	}
 
-	//If the start of the message contains the command.
 	if (sCommand == "/CAPITALIZE")
 	{
 		return CapitalizeMessage(_psMessage);
 	}
 
+	else if (sCommand == "/REVERSE")
+	{
+		return ReverseMessage(_psMessage);
+	}
+
 	else if (sCommand == "/GET")
 	{
-		return GetMessage(_psMessage);
+		return ECommand::Get;
 	}
 
 	else if (sCommand == "/PUT")
@@ -63,12 +67,12 @@ CCommands::ECommand CCommands::DetermineCommand(std::string* _psMessage)
 
 	else if (sCommand == "/QUIT")
 	{
-		return Quit(_psMessage);
+		return ECommand::Quit;
 	}
 
 	else
 	{
-		*_psMessage = "Command Error: The command " + sCommand + " does not exist.";
+		*_psMessage = "Command Error: The command '" + sCommand + "' does not exist.";
 		return ECommand::Error;
 	}
 }
@@ -84,13 +88,13 @@ void CCommands::TrimMessage(std::string* _psMessage)
 CCommands::ECommand CCommands::CapitalizeMessage(std::string* _psMessage)
 {
 	//If the message is just the command.
-	if (*_psMessage == "/CAPITALIZE")
+	if (_psMessage->size() == 11)
 	{
 		*_psMessage = "Command Error: No text was provided after the command.";
 		return ECommand::Error;
 	}
 
-	//Remove command from message.
+	//Remove the command from the message.
 	*_psMessage = _psMessage->substr(12);
 
 	//Convert all lower case to capitals.
@@ -105,17 +109,42 @@ CCommands::ECommand CCommands::CapitalizeMessage(std::string* _psMessage)
 	return ECommand::Capitalize;
 }
 
-CCommands::ECommand CCommands::GetMessage(std::string* _psMessage)
+CCommands::ECommand CCommands::ReverseMessage(std::string* _psMessage)
 {
-	return ECommand::Get;
+	//If the message is just the command.
+	if (_psMessage->size() == 8)
+	{
+		*_psMessage = "Command Error: No text was provided after the command.";
+		return ECommand::Error;
+	}
+
+	//Remove the command from the message.
+	*_psMessage = _psMessage->substr(9);
+
+	std::string sReversedMessage = "";
+
+	//Reverse string values for new string.
+	for (int i = _psMessage->size() - 1; i > -1; i--)
+	{
+		sReversedMessage += (*_psMessage)[i];
+	}
+
+	*_psMessage = sReversedMessage;
+
+	return ECommand::Reverse;
 }
 
 CCommands::ECommand CCommands::PutMessage(std::string* _psMessage)
 {
-	return ECommand::Put;
-}
+	//If the message is just the command.
+	if (_psMessage->size() == 4)
+	{
+		*_psMessage = "Command Error: No text was provided after the command.";
+		return ECommand::Error;
+	}
 
-CCommands::ECommand CCommands::Quit(std::string* _psMessage)
-{
-	return ECommand::Quit;
+	//Remove the command from the message.
+	*_psMessage = _psMessage->substr(5);
+
+	return ECommand::Put;
 }

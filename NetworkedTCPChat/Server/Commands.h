@@ -8,6 +8,7 @@ public:
 		n,
 		Error,
 		Capitalize,
+		Reverse,
 		Put,
 		Get,
 		Quit,
@@ -25,9 +26,7 @@ private:
 
 	static ECommand CapitalizeMessage(std::string* _psMessage);
 
-	static ECommand GetMessage(std::string* _psMessage);
+	static ECommand ReverseMessage(std::string* _psMessage);
 
 	static ECommand PutMessage(std::string* _psMessage);
-
-	static ECommand Quit(std::string* _psMessage);
 };

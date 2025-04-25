@@ -10,19 +10,12 @@ public:
 	CSocket(int _iPortNumber, int _iServerPortNumber);
 	~CSocket();
 
-	std::string GetIPv4Address();
-
 	void Send();
 
 	void Receive();
 
 private:
 	SOCKET m_oSocket;
-	SOCKET m_oServerSocket;
-
-	sockaddr_in m_oServerAddress;
-
-	std::string m_sIPv4;
 
 	void WSASetup();
 

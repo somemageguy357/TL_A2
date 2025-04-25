@@ -2,6 +2,8 @@
 #include <thread>
 #include <chrono>
 
+#include "ClientUtilities.h"
+
 CSocket::CSocket(int _iPortNumber, int _iServerPortNumber)
 {
 	WSASetup();
@@ -10,14 +12,9 @@ CSocket::CSocket(int _iPortNumber, int _iServerPortNumber)
 	AttemptServerConnection(_iServerPortNumber);
 }
 
-CSocket::~CSocket() 
+CSocket::~CSocket()
 {
 	closesocket(m_oSocket);
-}
-
-std::string CSocket::GetIPv4Address()
-{
-	return m_sIPv4;
 }
 
 void CSocket::Send()
@@ -30,7 +27,7 @@ void CSocket::Send()
 
 	while (true)
 	{
-		std::cout << "Enter a message to send:\n";
+		std::cout << "\nEnter a message to send: ";
 
 		std::cin.getline(cBuffer, uiLineLength);
 
@@ -38,7 +35,7 @@ void CSocket::Send()
 
 		if (sMessage.size() > ksiMaxInputLength)
 		{
-			std::cout << "Sending Error: Character Limit Exceeded.\n";
+			CUtilities::Print("Sending Error: Character Limit Exceeded.", 0, 1, CUtilities::EColour::Red);
 			continue;
 		}
 
@@ -46,46 +43,51 @@ void CSocket::Send()
 
 		if (iSend == SOCKET_ERROR)
 		{
-			std::cout << "Sending Error: " << WSAGetLastError() << std::endl;
+			CUtilities::Print("Sending Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
 			WSACleanup();
 			break;
 		}
 
 		break;
 	}
+
+	Receive();
 }
 
 void CSocket::Receive()
 {
-	//int iServerAddressLength = sizeof(m_oServerAddress);
-	//SOCKET oServerSocket = accept(m_oSocket, (sockaddr*)&m_oServerAddress, &iServerAddressLength);
-
-	//if (oServerSocket == INVALID_SOCKET)
-	//{
-	//	std::cout << "Accept Error: " << WSAGetLastError() << std::endl;
-	//	//WSACleanup();
-	//}
-
 	const int kiBufferSize = 257; //Has to be one more than the limit (256).
 	char cBuffer[kiBufferSize];
 
 	while (true)
 	{
-		std::cout << "waiting for message...\n";
-
 		int iRcv = recv(m_oSocket, cBuffer, kiBufferSize - 1, 0);
 
 		if (iRcv == SOCKET_ERROR)
 		{
-			std::cout << "Receiving Error: " << WSAGetLastError() << std::endl;
-			//break;
+			CUtilities::Print("Receiving Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
 			continue;
 		}
 
 		cBuffer[iRcv] = '\0';
-
-		std::cout << cBuffer << std::endl;
 		break;
+	}
+
+	std::string sBuffer = cBuffer;
+
+	if (sBuffer.substr(0, 7) == "Server:")
+	{
+		CUtilities::Print(sBuffer, 1, 1, CUtilities::EColour::Yellow);
+	}
+
+	else
+	{
+		CUtilities::Print(sBuffer, 1, 1, CUtilities::EColour::Cyan);
+	}
+
+	if (sBuffer != "Server: Leaving the server.")
+	{
+		Send();
 	}
 }
 
@@ -99,13 +101,13 @@ void CSocket::WSASetup()
 
 	if (iResult != 0)
 	{
-		std::cout << "WSAStartUp failed. Result: " << iResult << std::endl;
+		CUtilities::Print("WSAStartUp failed. Result: " + std::to_string(iResult) + ".", 0, 1, CUtilities::EColour::Red);
 		WSACleanup();
 	}
 
 	if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
 	{
-		std::cout << "WSAStartUp failed. Version not available." << std::endl;
+		CUtilities::Print("WSAStartUp failed. Version not available.", 0, 1, CUtilities::EColour::Red);
 		WSACleanup();
 	}
 }
@@ -113,11 +115,11 @@ void CSocket::WSASetup()
 void CSocket::RetrieveIPv4Address()
 {
 	PCSTR sHostName = "";
-	addrinfo* poAddressInfo;
+	addrinfo* poAddressInfo = nullptr;
 
 	if (getaddrinfo(sHostName, NULL, 0, &poAddressInfo) != 0)
 	{
-		std::cout << "name error: " << WSAGetLastError() << std::endl;
+		CUtilities::Print("Name Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
 		WSACleanup();
 	}
 
@@ -128,10 +130,11 @@ void CSocket::RetrieveIPv4Address()
 			continue;
 		}
 
-		char csBuffer[256];
+		char cBuffer[256];
 		sockaddr_in* poAddIn = (sockaddr_in*)poAI->ai_addr;
-		inet_ntop(AF_INET, &poAddIn->sin_addr, csBuffer, 256);
-		m_sIPv4 = csBuffer;
+		inet_ntop(AF_INET, &poAddIn->sin_addr, cBuffer, 256);
+		CUtilities::Print("IP Address: " + (std::string)cBuffer, 0, 1);
+		//std::cout << "IP Address: " << cBuffer << std::endl;
 	}
 }
 
@@ -141,8 +144,8 @@ void CSocket::SetupSocket(int _iPortNumber)
 
 	if (m_oSocket == INVALID_SOCKET)
 	{
-		std::cout << "Invalid Socket: " << WSAGetLastError() << std::endl;
-		//WSACleanup();
+		CUtilities::Print("Invalid Socket: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
+		WSACleanup();
 	}
 
 	sockaddr_in oSocketAddress;
@@ -154,8 +157,8 @@ void CSocket::SetupSocket(int _iPortNumber)
 
 	if (iStatus == SOCKET_ERROR)
 	{
-		std::cout << "Client Bind Error: " << WSAGetLastError() << std::endl;
-		//WSACleanup();
+		CUtilities::Print("Client Bind Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
+		WSACleanup();
 	}
 }
 
@@ -210,34 +213,29 @@ void CSocket::AttemptServerConnection(int _iServerPortNumber)
 
 	//std::cout << "Connected.\n";
 
-	std::cout << "Connecting to Server...\n";
-
-	m_oServerSocket = socket(AF_INET, SOCK_STREAM, 0);
+	CUtilities::Print("Connecting to server...", 0, 1);
 
 	if (m_oSocket == INVALID_SOCKET)
 	{
-		std::cout << "Invalid Server Socket: " << WSAGetLastError() << std::endl;
-		//WSACleanup();
-	}
-
-	//m_oServerAddress;
-	m_oServerAddress.sin_family = AF_INET;
-	m_oServerAddress.sin_port = htons(_iServerPortNumber);
-
-	InetPton(AF_INET, L"127.0.0.1", &m_oServerAddress.sin_addr.S_un.S_addr);
-
-	int iStatus = connect(m_oSocket, (sockaddr*)&m_oServerAddress, sizeof(m_oServerAddress));
-
-	if (iStatus == SOCKET_ERROR)
-	{
-		std::cout << "Connection Error: " << WSAGetLastError() << std::endl;
+		CUtilities::Print("Invalid Server Socket: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
 		WSACleanup();
 	}
 
-	else
+	sockaddr_in oServerAddress;
+	oServerAddress.sin_family = AF_INET;
+	oServerAddress.sin_port = htons(_iServerPortNumber);
+
+	InetPton(AF_INET, L"127.0.0.1", &oServerAddress.sin_addr.S_un.S_addr);
+
+	int iStatus = connect(m_oSocket, (sockaddr*)&oServerAddress, sizeof(oServerAddress));
+
+	if (iStatus == SOCKET_ERROR)
 	{
-		std::cout << "Connected.\n";
+		CUtilities::Print("Connection Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
+		WSACleanup();
 	}
+
+	Receive();
 }
 
 void CSocket::ConnectionRetryTimer(short _siSeconds)

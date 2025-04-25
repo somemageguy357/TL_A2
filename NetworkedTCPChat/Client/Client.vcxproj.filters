@@ -18,9 +18,15 @@
     <ClCompile Include="Socket.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
+    <ClCompile Include="ClientUtilities.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Socket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
