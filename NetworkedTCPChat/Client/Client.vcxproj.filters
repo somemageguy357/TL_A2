@@ -10,24 +10,45 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{066dfbeb-51a9-4ca0-8290-c24245a7086b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Multithreading">
+      <UniqueIdentifier>{6efe73cb-7038-4639-9daa-69f37519c583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\Multithreading">
+      <UniqueIdentifier>{c4d2541f-5d32-45c7-a6a3-8e364638f68b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="Socket.cpp">
+    <ClCompile Include="ClientSocket.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="ClientUtilities.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
+    <ClCompile Include="ClientThreadPool.cpp">
+      <Filter>SourceFiles\Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientTask.cpp">
+      <Filter>SourceFiles\Multithreading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Socket.h">
+    <ClInclude Include="ClientSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClientUtilities.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientSafeQueue.h">
+      <Filter>Header Files\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientThreadPool.h">
+      <Filter>Header Files\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientTask.h">
+      <Filter>Header Files\Multithreading</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -36,6 +36,8 @@ public:
 	/// <param name="_eColour:">The colour of the text (defaulted to white).</param>
 	static void Print(std::string _sString, int _iPreNewLines, int _iPostNewLines, EColour _eColour = EColour::White);
 
+	static bool CompareStrings(std::string _sString1, std::string _sString2, bool _bCaseSensitive);
+
 private:
 	CUtilities() = delete;
 	~CUtilities() = delete;

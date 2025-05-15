@@ -1,8 +1,10 @@
-﻿  ClientUtilities.cpp
+﻿  ClientTask.cpp
+  ClientUtilities.cpp
   main.cpp
-  Socket.cpp
+  ClientSocket.cpp
+  ClientThreadPool.cpp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 141 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 386 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Client.vcxproj -> C:\Users\Administrator\Desktop\course\Semester3\Network\TL_A2_Repo\NetworkedTCPChat\Release\Client.exe

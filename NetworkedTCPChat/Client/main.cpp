@@ -10,11 +10,24 @@ Author : Connor Galvin
 Mail : Connor.Galvin@mds.ac.nz
 **************************************************************************/
 
-#include "Socket.h"
+#include "ClientSocket.h"
+#include "ClientThreadPool.h"
+
+#include <string>
 
 int main()
 {
 	CSocket* poSocket = new CSocket(10001, 9999);
+
+	CThreadPool oThreadPool;
+
+	//Creates a task for the thread pool. After the client has received a connection message from the server, it will add
+	//another task that handles the client sending to the server.
+	oThreadPool.AddTask(CTask(poSocket, CTask::ETaskType::Receive, &oThreadPool));
+
+	while (oThreadPool.GetTaskProcessed() < 2) {}
+
+	oThreadPool.Stop();
 
 	delete poSocket;
 

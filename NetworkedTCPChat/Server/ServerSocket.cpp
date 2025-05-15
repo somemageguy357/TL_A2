@@ -11,6 +11,7 @@ Mail : Connor.Galvin@mds.ac.nz
 **************************************************************************/
 
 #include "ServerSocket.h"
+//#include "ThreadPool.h"
 
 CServerSocket::CServerSocket(int _iPortNumber)
 {
@@ -214,11 +215,6 @@ void CServerSocket::Accept()
 	}
 
 	m_iClientCount += 1;
-
-	Send("Server: Connection successful.\n\nServer: You can use the following commands:");
-	//Send("'/CAPITALIZE [message]' - Capitalizes all letters in the message.");
-	//Send("'/REVERSE [message]' - Reverses the order of all letters in the message.");
-	//Send("'/PUT [message]' - Saves the message to the server which can be retrieved using /GET.");
-	//Send("'/GET' - Gets your saved message from the server if there is one.");
-	//Send("'/QUIT' - Disconnects the client from the server.");
+	
+	Send("Server: Connection successful. You may now begin typing.\n");
 }

@@ -142,13 +142,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClientTask.cpp" />
     <ClCompile Include="ClientUtilities.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Socket.cpp" />
+    <ClCompile Include="ClientSocket.cpp" />
+    <ClCompile Include="ClientThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Socket.h" />
+    <ClInclude Include="ClientSafeQueue.h" />
+    <ClInclude Include="ClientTask.h" />
+    <ClInclude Include="ClientSocket.h" />
     <ClInclude Include="ClientUtilities.h" />
+    <ClInclude Include="ClientThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

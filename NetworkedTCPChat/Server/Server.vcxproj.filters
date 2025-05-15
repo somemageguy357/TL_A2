@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Multithreading">
+      <UniqueIdentifier>{d3ffbe71-2a67-4cfa-8c40-82a778c441a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Multithreading">
+      <UniqueIdentifier>{c1ab2e0b-8a7e-4379-818d-cf8cbcf30d89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

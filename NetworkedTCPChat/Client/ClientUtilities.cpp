@@ -57,3 +57,50 @@ void CUtilities::SetTextColour(EColour _eColour)
         break;
     }
 }
+
+bool CUtilities::CompareStrings(std::string _sString1, std::string _sString2, bool _bCaseSensitive)
+{
+    //If the two strings are not the same size: return false.
+    if (_sString1.size() != _sString2.size())
+    {
+        return false;
+    }
+
+    //If case sensitive: compare strings.
+    else if (_bCaseSensitive == true)
+    {
+        if (_sString1 == _sString2)
+        {
+            return true;
+        }
+    }
+
+    else //Convert all lower case letters of both strings to capitals for easy comparison.
+    {
+        std::string s1 = _sString1;
+        std::string s2 = _sString2;
+
+        for (size_t i = 0; i < s1.size(); i++)
+        {
+            if (s1[i] > 96 && s1[i] < 123)
+            {
+                s1[i] = s1[i] - 32;
+            }
+        }
+
+        for (size_t i = 0; i < s2.size(); i++)
+        {
+            if (s2[i] > 96 && s2[i] < 123)
+            {
+                s2[i] = s2[i] - 32;
+            }
+        }
+
+        if (s1 == s2)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

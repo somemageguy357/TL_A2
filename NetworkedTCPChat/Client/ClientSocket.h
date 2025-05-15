@@ -29,12 +29,16 @@ public:
 
 	~CSocket();
 
-	void Send();
+	SOCKET* GetSocket();
 
-	void Receive();
+	void SetHasQuit(bool _bHasQuit);
+
+	bool GetHasQuit();
 
 private:
 	SOCKET m_oSocket;
+
+	bool m_bHasQuit = false;
 
 	void WSASetup();
 
@@ -43,6 +47,4 @@ private:
 	void SetupSocket(int _iPortNumber);
 
 	void AttemptServerConnection(int _iServerPortNumber);
-
-	void ConnectionRetryTimer(short _siSeconds);
 };

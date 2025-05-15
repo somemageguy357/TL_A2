@@ -10,7 +10,7 @@ Author : Connor Galvin
 Mail : Connor.Galvin@mds.ac.nz
 **************************************************************************/
 
-#include "Socket.h"
+#include "ClientSocket.h"
 #include <thread>
 #include <chrono>
 
@@ -29,78 +29,19 @@ CSocket::~CSocket()
 	closesocket(m_oSocket);
 }
 
-void CSocket::Send()
+SOCKET* CSocket::GetSocket()
 {
-	unsigned int uiLineLength = -1;
-
-	const short ksiMaxInputLength = 256;
-
-	char cBuffer[ksiMaxInputLength];
-
-	while (true)
-	{
-		std::cout << "\nEnter a message to send: ";
-
-		std::cin.getline(cBuffer, uiLineLength);
-
-		std::string sMessage = cBuffer; //maybe replace with char sizeof?
-
-		if (sMessage.size() > ksiMaxInputLength)
-		{
-			CUtilities::Print("Sending Error: Character Limit Exceeded.", 0, 1, CUtilities::EColour::Red);
-			continue;
-		}
-
-		int iSend = send(m_oSocket, cBuffer, strlen(cBuffer), 0);
-
-		if (iSend == SOCKET_ERROR)
-		{
-			CUtilities::Print("Sending Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
-			WSACleanup();
-			break;
-		}
-
-		break;
-	}
-
-	Receive();
+	return &m_oSocket;
 }
 
-void CSocket::Receive()
+void CSocket::SetHasQuit(bool _bHasQuit)
 {
-	const int kiBufferSize = 257; //Has to be one more than the limit (256).
-	char cBuffer[kiBufferSize];
+	m_bHasQuit = _bHasQuit;
+}
 
-	while (true)
-	{
-		int iRcv = recv(m_oSocket, cBuffer, kiBufferSize - 1, 0);
-
-		if (iRcv == SOCKET_ERROR)
-		{
-			CUtilities::Print("Receiving Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
-			continue;
-		}
-
-		cBuffer[iRcv] = '\0';
-		break;
-	}
-
-	std::string sBuffer = cBuffer;
-
-	if (sBuffer.substr(0, 7) == "Server:")
-	{
-		CUtilities::Print(sBuffer, 1, 1, CUtilities::EColour::Yellow);
-	}
-
-	else
-	{
-		CUtilities::Print(sBuffer, 1, 1, CUtilities::EColour::Cyan);
-	}
-
-	if (sBuffer != "Server: Leaving the server.")
-	{
-		Send();
-	}
+bool CSocket::GetHasQuit()
+{
+	return m_bHasQuit;
 }
 
 void CSocket::WSASetup()
@@ -176,55 +117,6 @@ void CSocket::SetupSocket(int _iPortNumber)
 
 void CSocket::AttemptServerConnection(int _iServerPortNumber)
 {
-	//sockaddr_in oServerAddress;
-	//oServerAddress.sin_family = AF_INET;
-	//oServerAddress.sin_port = htons(_iServerPortNumber);
-
-	//bool bConnected = false;
-	//bool bRetry = false;
-	//short siConnectionAttempts = 1;
-	//short siRetryTimer = 2;
-
-	//std::cout << "Attempting to connect to server...\n";
-	//std::thread oThread;
-
-	//InetPton(AF_INET, L"127.0.0.1", &oServerAddress.sin_addr.S_un.S_addr);
-
-	//while (bConnected == false)
-	//{
-	//	if (bRetry == true)
-	//	{
-	//		bRetry = false;
-	//		oThread = std::thread([this, siRetryTimer] { ConnectionRetryTimer(siRetryTimer); });
-	//		oThread.join();
-	//		//iRetryTimer += 2;
-	//	}
-
-	//	int iStatus = connect(m_oSocket, (sockaddr*)&oServerAddress, sizeof(oServerAddress));
-
-	//	if (iStatus == SOCKET_ERROR)
-	//	{
-	//		std::cout << "Connection Error: " << WSAGetLastError() << ".";
-
-	//		if (WSAGetLastError() == 10061)
-	//		{
-	//			std::cout << " Retrying... (Attempt " << siConnectionAttempts << ").";
-	//			siConnectionAttempts += 1;
-	//			bRetry = true;
-	//		}
-
-	//		std::cout << std::endl;
-	//	}
-
-	//	else
-	//	{
-	//		bConnected = true;
-	//		WSACleanup();
-	//	}
-	//}
-
-	//std::cout << "Connected.\n";
-
 	CUtilities::Print("Connecting to server...", 0, 1);
 
 	if (m_oSocket == INVALID_SOCKET)
@@ -243,15 +135,16 @@ void CSocket::AttemptServerConnection(int _iServerPortNumber)
 
 	if (iStatus == SOCKET_ERROR)
 	{
-		CUtilities::Print("Connection Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
-		WSACleanup();
+		if (WSAGetLastError() == 10061)
+		{
+			CUtilities::Print("Connection Error: " + std::to_string(WSAGetLastError()) + ": Connection Refused. Attempting another connection...", 0, 1, CUtilities::EColour::Red);
+			AttemptServerConnection(_iServerPortNumber); //Re-attempt connection.
+		}
+
+		else
+		{
+			CUtilities::Print("Connection Error: " + std::to_string(WSAGetLastError()) + ".", 0, 1, CUtilities::EColour::Red);
+			WSACleanup();
+		}
 	}
-
-	Receive();
-}
-
-void CSocket::ConnectionRetryTimer(short _siSeconds)
-{
-	std::cout << "waiting\n";
-	std::this_thread::sleep_for(std::chrono::seconds(_siSeconds));
 }
